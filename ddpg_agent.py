@@ -6,25 +6,24 @@ from model import Actor, Critic
 import torch
 import torch.nn.functional as F
 import torch.optim as optim
-BUFFER_SIZE            = int(1e6)                         # Replay buffer size
-BATCH_SIZE             = 128                              # Mini-batch size
-GAMMA                  = 0.99                             # Discount factor 
-TAU                    = 1e-3                             # Soft-update target parameters
-LR_ACTOR               = 1e-3                             # Learning Rate of Actor
-LR_CRITIC              = 1e-3                             # Learning Rate of Critic
-WEIGHT_DECAY           = 0                                # L2 Weight Decay
-LEAKINESS              = 0.01                             # Leakiness of leaky_relu
-LEARN_EVERY            = 20                               # Learning timestep interval
-LEARN_NUM              = 10                               # Number of learning passes
-GRAD_CLIPPING          = 1.                               # Gradient Clipping
+BUFFER_SIZE = int(1e6)       # Replay buffer size
+BATCH_SIZE  = 128            # Mini-batch size
+GAMMA       = 0.99           # Discount factor 
+TAU         = 1e-3           # Soft-update target parameters
+LR_ACTOR    = 1e-3           # Learning Rate of Actor
+LR_CRITIC   = 1e-3           # Learning Rate of Critic
+WEIGHT_DECAY= 0              # L2 Weight Decay
+LEAK_FACTOR = 0.01           # Leak factor of leaky_relu
+LEARN_EVERY = 20             # Learning timestep interval
+LEARN_NUM   = 10             # Number of learning passes
+GRAD_CLIPPING= 1.            # Gradient Clipping
 
 # Ornstein-Uhlenbeck noise
-OU_SIGMA               = 0.2
-OU_THETA               = 0.15
-EPSILON                = 1.                               # for epsilon in noise
-EPSILON_DECAY          = 1e-6
-USE_GPU                = torch.cuda.is_available()
-device = torch.device('cuda:0' if USE_GPU else 'cpu')
+OU_SIGMA = 0.2
+OU_THETA = 0.15
+EPSILON  = 1.     # for epsilon in noise
+EPSILON_DECAY = 1e-6
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 class Agent():
     """Agent which interacts and learns from environment"""
     def __init__(self, state_size, action_size, random_seed=0):
@@ -41,13 +40,13 @@ class Agent():
         self.epsilon = EPSILON
         
         # Actor Network
-        self.actor_local = Actor(state_size, action_size, random_seed, leakiness=LEAKINESS).to(device)
-        self.actor_target = Actor(state_size, action_size, random_seed, leakiness=LEAKINESS).to(device)
+        self.actor_local = Actor(state_size, action_size, random_seed, leakiness=LEAK_FACTOR).to(device)
+        self.actor_target = Actor(state_size, action_size, random_seed, leakiness=LEAK_FACTOR).to(device)
         self.actor_optimizer = optim.Adam(self.actor_local.parameters(), lr=LR_ACTOR)
         
         # Critic Network    
-        self.critic_local = Critic(state_size, action_size, random_seed, leakiness=LEAKINESS).to(device)
-        self.critic_target = Critic(state_size, action_size, random_seed, leakiness=LEAKINESS).to(device)
+        self.critic_local = Critic(state_size, action_size, random_seed, leakiness=LEAK_FACTOR).to(device)
+        self.critic_target = Critic(state_size, action_size, random_seed, leakiness=LEAK_FACTOR).to(device)
         self.critic_optimizer = optim.Adam(self.critic_local.parameters(), lr=LR_CRITIC, weight_decay=WEIGHT_DECAY)
         
         self.noise = OUNoise(action_size, random_seed)
