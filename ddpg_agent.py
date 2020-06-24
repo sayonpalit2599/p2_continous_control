@@ -59,16 +59,19 @@ class Agent():
         self.memory.add(states, actions, rewards, next_states, dones)
     
     def learn_from_memory(self, timestep):
+        """Sample experience tuples from the replay memory every LEARN_EVERY timesteps"""
         if len(self.memory) > BATCH_SIZE and timestep % LEARN_EVERY == 0:
             for _ in range(LEARN_NUM):
                 experiences = self.memory.sample()
                 self.learn(experiences, GAMMA)
     
     def step(self, states, actions, rewards, next_states, dones, timestep):
+        """Save experience in replay memory, and use random sample from buffer to learn."""
         self.add_to_memory(states, actions, rewards, next_states, dones)
         self.learn_from_memory(timestep)
     
     def act(self, state, add_noise=True):
+        """Returns actions for given state as per current policy."""
         state = torch.from_numpy(state).float().to(device)
         self.actor_local.eval()
         with torch.no_grad():
@@ -81,6 +84,7 @@ class Agent():
         return np.clip(action, -1, 1)
     
     def reset(self):
+        """resets the current noise value"""
         self.noise.reset()
         
     def learn(self, experiences, gamma):
@@ -135,9 +139,8 @@ class Agent():
         self.soft_update(self.actor_local, self.actor_target, TAU)
         
         #-----------update epsilon decay------------------------#
-        if EPSILON_DECAY>0:
-            self.epsilon-=EPSILON_DECAY
-            self.noise.reset()
+        self.epsilon*=EPSILON_DECAY
+        self.noise.reset()
         
     def soft_update(self, local_model, target_model, tau):
         """ Soft updating target model's parameters
@@ -156,6 +159,13 @@ class OUNoise:
     """Ornstein-Uhlenbeck noise"""
     
     def __init__(self, size, seed, mu=0., theta=OU_THETA, sigma=OU_SIGMA):
+        """Initialize parameters and noise process.
+        Params
+        ======
+            mu: long-running mean
+            theta: the speed of mean reversion
+            sigma: the volatility parameter
+        """
         self.mu = mu * np.ones(size)
         self.theta = theta
         self.sigma = sigma
@@ -169,7 +179,8 @@ class OUNoise:
     def sample(self):
         """Update noise and return it as sample"""
         x = self.state
-        dx = self.theta * (self.mu - x) + self.sigma * np.array([random.random() for i in range(len(x))])
+        #dx = self.theta * (self.mu - x) + self.sigma * np.array([random.random() for i in range(len(x))])
+        dx = self.theta * (self.mu - x) + self.sigma * np.random.standard_normal(self.size)
         self.state = x + dx
         return self.state
     
