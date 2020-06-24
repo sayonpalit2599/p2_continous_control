@@ -43,7 +43,7 @@ To run the codes, follow the next steps:
 	cd python
 	pip install .
 ```
-* Create an IPython kernel for the `dqn` environment
+* Create an IPython kernel for the `drlnd` environment
 ```bash
 	python -m ipykernel install --user --name drlnd --display-name "drlnd"
 ```
