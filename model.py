@@ -83,7 +83,7 @@ class Critic(nn.Module):
         self.fc3.weight.data.uniform_(-3e-3, 3e-3)
     
     def forward(self, state, action):
-        """Build an actor network that maps states to actions
+        """
            Maps (state, action) to Q-value
            Args:
             state (torch.Tensor): State (or rows of states)
