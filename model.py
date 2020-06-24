@@ -40,7 +40,13 @@ class Actor(nn.Module):
         self.fc3.weight.data.uniform_(-3e-3, 3e-3)
     
     def forward(self, state):
-        "Build an actor network that maps states to actions"
+        """Build an actor network that maps states to actions
+           Maps state to action values
+           Args:
+            state (torch.Tensor): State (or rows of states)
+           Returns:
+            torch.Tensor: Tensor of action values for state(s)
+        """
         if state.dim()==1: state = torch.unsqueeze(state, 0)
         x = F.leaky_relu(self.fc1(state), self.leakiness)
         x = self.bn1(x)
@@ -77,7 +83,14 @@ class Critic(nn.Module):
         self.fc3.weight.data.uniform_(-3e-3, 3e-3)
     
     def forward(self, state, action):
-        "Build an actor network that maps states to actions"
+        """Build an actor network that maps states to actions
+           Maps (state, action) to Q-value
+           Args:
+            state (torch.Tensor): State (or rows of states)
+            action (torch.Tensor): Action (or rows of actions)
+           Returns:
+            torch.Tensor: Tensor of action values for state(s)
+        """
         if state.dim()==1: state = torch.unsqueeze(state, 0)
         x = F.leaky_relu(self.fc1(state), self.leakiness)
         x = self.bn1(x)
