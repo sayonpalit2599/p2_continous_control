@@ -38,6 +38,10 @@ To run the codes, follow the next steps:
 	```bash
 	pip install gym
 	```
+* Download this repository or clone it
+	```bash
+	git clone https://github.com/sayonpalit2599/p2_continous_control/
+	```
 * Install the dependencies under the folder python/
 ```bash
 	cd python
@@ -66,5 +70,5 @@ jupyter notebook
 ## Results
 <img src = "https://github.com/sayonpalit2599/p2_continous_control/blob/master/plot.jpg" alt = "result">
 
-* The current model solves the environment in approx ~560 - 600 epsiodes on average with an ` NVIDIA GTX1050TI ` and 
+* The current model solves the environment in approx ~460 epsiodes on average with an ` NVIDIA GTX1050TI ` and 
 `Intel i8750H`.
